@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <semaphore.h>
+
+#define CADEIRAS 5
+#define N 61
+
+    int a,b, int_rand, esperando;
+    float float_rand;
+
+sem_t mutex;
+sem_t customizacaop;
+sem_t barbeirop;
+
+//ação do barbeiro
+
+void *barbeiro(void *arg){
+    while(1){
+        sem_wait(&customizacaop);
+        sem_wait(&mutex);
+        esperando=esperando-1;
+        sem_post(&barbeirop);
+        sem_post(&mutex);
+        corte_cabelo();
+    }
+
+
+}
+
+//ação do cliente
+
+void *customizacao(void *b){
+    int a= *(int*) b;
+    sem_wait(&mutex);
+    if(esperando < CADEIRAS){
+        printf("o cliente %d entrou na barbearia\n", a);
+        esperando=esperando+1;
+        sem_post(&costumizacaop);
+        sem_post(&mutex);
+        sem_wait(&barbeirop);
+        get_cortedecabelo(a);
+    }else{
+        sem_post(&mutex);
+        printf("o cliente saiu da barbearia por que ela estava lotada");
+
+    }
+
+void corte_cabelo(){
+    printf("o barbeiro corta cabelo do cliente\n");
+    float rand=0.000001*random();
+    int_rand=float_rand;
+    unsleep(int_rand);
+}
+
+void get_cortedecabelo(int_i){
+
+    printf("o cliente corta o cabelo",i);
+
+}
+
+void main(){
+
+    esperando=0;
+    int res;
+
+    pthread_t thread[N];
+
+    void *thread_result;
+
+    res= sem_init(&mutex,0,1);
+    if(res!=0){
+        perror("error na inicialização do semaforo");
+        exit(EXIT_FAILURE);
+
+    }
+    res= sem_intit(&customizacaop, 0,0);
+    if(res!=0){
+        perror("error na inicialização do semaforo");
+        exit(EXITE_FAILURE);
+    }
+
+    res= sem_init(&barbeirop,0,0);
+    if(res!=0){
+        perror("error na inicialização do semaforo");
+        exit(EXIT_FAILURE);
+
+    }
+
+    res= pthread_create(&thread[0],NULL,barbeiro,NULL);
+    if(res!=0){
+        perror("error na incialização do semaforo");
+        exit(EXIT_FAILURE);
+
+    }
+
+    for(a=1;a<N;a++){
+     res= pthread_create(&thread[1],customizacao,&i);
+     if(res!=0){
+        perror("error de incialização do semaforo");
+        exit(EXITE_FAILURE);
+     }
+    }
+
+    for(a=0;a<N;a++){
+        res= pthread_join(thread[1],&thread_result);
+         if(res!=0){
+        perror("error de incialização do semaforo");
+        exit(EXITE_FAILURE);
+     }
+    }
+
+
+}
+
+}
